@@ -1,9 +1,36 @@
+import { useEffect, useState } from "react"
 
 function App() {
+  
+  const [politics, setPolitics] = useState([])
+
+  const fetchPoliticians = async() => {
+    const res = await fetch('http://localhost:3333/politicians')
+    const data = await res.json()
+    setPolitics(data)
+    
+  }
+  
+  useEffect(() => {
+    fetchPoliticians()
+  }, [])
+  
+  
 
   return (
     <>
-     
+    <div className="card-politici">
+    {politics.map((el, index) => (
+     <div className="card" key={index}>
+      <img src={el.image} />
+       <div className="card-body">
+         <h5 className="card-title">{el.name}</h5>
+         <h6 className="card-subtitle">{el.position}</h6>
+         <p className="card-text">{el.biography}</p>
+       </div>
+     </div>
+    ))}
+    </div>
     </>
   )
 }
