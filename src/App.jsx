@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 
 function App() {
   
@@ -17,9 +17,26 @@ function App() {
   }, [])
   
   const filteredPolitics = useMemo(() => {
+    
     return politics.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.biography.toLowerCase().includes(search.toLowerCase()))
     
   }, [politics, search])
+
+
+  const Card = React.memo(({image, name, position, biography}) => {
+    console.log("Render Card:", name);
+    return (
+      <>
+        <img src={image} />
+        <div className="card-body">
+          <h5 className="card-title">{name}</h5>
+          <h6 className="card-subtitle">{position}</h6>
+          <p className="card-text">{biography}</p>
+        </div>
+      </>
+    )
+    
+  })
 
   return (
     <>
@@ -34,13 +51,13 @@ function App() {
     <div className="card-politici">
     {filteredPolitics.map((el, index) => (
      <div className="card" key={index}>
-      <img src={el.image} />
-       <div className="card-body">
-         <h5 className="card-title">{el.name}</h5>
-         <h6 className="card-subtitle">{el.position}</h6>
-         <p className="card-text">{el.biography}</p>
-       </div>
-     </div>
+      <Card
+        name={el.name}
+        image={el.image}
+        position={el.position}
+        biography={el.biography}
+      />
+    </div>
     ))}
     </div>
     </>
@@ -71,3 +88,11 @@ export default App
 // ❌ Non usare useEffect per aggiornare l’array filtrato.
 
 // Obiettivo: Migliorare le prestazioni evitando ricalcoli inutili quando il valore della ricerca non cambia.
+
+
+// 📌 Milestone 3: Ottimizzare il rendering delle card con React.memo
+// Attualmente, ogni volta che l’utente digita nella barra di ricerca, tutte le card vengono ri-renderizzate, anche quelle che non sono cambiate.
+// Usa React.memo() per evitare il ri-render delle card quando le loro props non cambiano.
+// Aggiungi un console.log() dentro il componente Card per verificare che venga renderizzato solo quando necessario.
+
+// Obiettivo: Se la lista filtrata cambia, solo le nuove card devono essere renderizzate, mentre le altre rimangono in memoria senza essere ridisegnate.
